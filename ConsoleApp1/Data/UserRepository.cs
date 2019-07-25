@@ -6,7 +6,7 @@ namespace BankLedgerConsole
 {
     class UserRepository
     {
-        // Without a persistence medium, we can just have an in-memory list to represent a Context.
+        // No persistence, only in-memory for the demo.
         private List<User> UserStore { get; set; }
 
         public UserRepository()
