@@ -1,28 +1,13 @@
-﻿using ConsoleApp1.Models;
+﻿using BankLedgerConsole.Models;
+using BankLedgerConsole.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleApp1
+namespace BankLedgerConsole
 {
     class Program
     {
-        public delegate bool Validator(string input);
-
-        public static string ValidateInput(Validator Predicate)
-        {
-            var response = Console.ReadLine();
-
-            while(!Predicate(response))
-            {
-                Console.WriteLine("== Invalid Input ==");
-                response = Console.ReadLine();
-            }
-
-            return response;
-        }
-
-
         static void Main(string[] args)
         {
             // App Context
@@ -41,39 +26,12 @@ namespace ConsoleApp1
                         Name = "Deposit",
                         Select = () =>
                         {
-                            string response = "";
-                            decimal amount = 0m;
+                            Console.WriteLine("Amount: ");
+                            string response = ValidationUtils.ValidateInput(ValidationUtils.IsPositiveDecimalValue);
+                            decimal amount = Decimal.Parse(response);
 
-                            do
-                            {
-                                Console.WriteLine("Amount: ");
-                                response = Console.ReadLine();
-
-                                try
-                                {
-                                    amount = Decimal.Parse(response);
-                                }
-                                catch(Exception e)
-                                {
-                                    amount = 0m;
-                                }
-                                if (amount <= 0m)
-                                {
-                                    Console.WriteLine("== Invalid Argument ==");
-                                }
-                            } while (amount <= 0m);
-
-                            do
-                            {
-                                Console.WriteLine("Reason: ");
-                                response = Console.ReadLine();
-
-                                if (response.Length <= 0)
-                                {
-                                    Console.WriteLine("== Invalid Argument ==");
-                                }
-
-                            } while (response.Length <= 0);
+                            Console.WriteLine("Reason: ");
+                            response = ValidationUtils.ValidateInput(i => i.Length > 0);
 
                             activeUser.AddTransaction(new Transaction
                             {
@@ -90,39 +48,12 @@ namespace ConsoleApp1
                         Name = "Withdraw",
                         Select = () =>
                         {
-                            string response = "";
-                            decimal amount = 0m;
+                            Console.WriteLine("Amount: ");
+                            string response = ValidationUtils.ValidateInput(ValidationUtils.IsPositiveDecimalValue);
+                            decimal amount = Decimal.Parse(response);
 
-                            do
-                            {
-                                Console.WriteLine("Amount: ");
-                                response = Console.ReadLine();
-
-                                try
-                                {
-                                    amount = Decimal.Parse(response);
-                                }
-                                catch(Exception e)
-                                {
-                                    amount = 0m;
-                                }
-                                if (amount <= 0m)
-                                {
-                                    Console.WriteLine("== Invalid Argument ==");
-                                }
-                            } while (amount <= 0m);
-
-                            do
-                            {
-                                Console.WriteLine("Reason: ");
-                                response = Console.ReadLine();
-
-                                if (response.Length <= 0)
-                                {
-                                    Console.WriteLine("== Invalid Argument ==");
-                                }
-
-                            } while (response.Length <= 0);
+                            Console.WriteLine("Reason: ");
+                            response = ValidationUtils.ValidateInput(i => i.Length > 0);
 
                             try
                             {
@@ -149,10 +80,7 @@ namespace ConsoleApp1
                         {
                             activeUser.Transactions.OrderBy(u => u.Timestamp)
                                                    .ToList()
-                                                   .ForEach(u => Console.WriteLine($"{u.Timestamp} - {u.TransactionType.ToString()} - {u.Reason} - {u.Amount}"));
-
-                            Console.WriteLine("Press Enter To Continue");
-                            Console.ReadLine();
+                                                   .ForEach(u => Console.WriteLine($"{u.Timestamp} - {u.TransactionType.ToString()} - {u.Reason} - {u.Amount:C}"));
                         }
 
                     },
@@ -162,9 +90,7 @@ namespace ConsoleApp1
                         Name = "Balance",
                         Select = () =>
                         {
-                            Console.WriteLine("Balance: ", activeUser.Balance);
-                            Console.WriteLine("Press Enter To Continue");
-                            Console.ReadLine();
+                            Console.WriteLine($"Balance: {activeUser.Balance:C}");
                         }
                     }
                 }
@@ -182,11 +108,14 @@ namespace ConsoleApp1
                         Name = "Create New User",
                         Select = () =>
                         {
-                            Console.WriteLine("Username: ");
-                            string username = ValidateInput(s => userRepository.Get(s) == null);
-                            activeUser = userRepository.Add(username);
+                            Console.WriteLine("Username ('Q' To Exit): ");
+                            string response = ValidationUtils.ValidateInput(s => userRepository.Get(s) == null || s == "Q");
 
-                            TransactionMenu.Prompt();
+                            if (response != "Q")
+                            {
+                                activeUser = userRepository.Add(response);
+                                TransactionMenu.Prompt();
+                            }
                         }
                     },
                     new MenuOption
@@ -195,11 +124,14 @@ namespace ConsoleApp1
                         Name = "Login",
                         Select = () =>
                         {
-                            Console.WriteLine("Username: ");
-                            string username = ValidateInput(s => userRepository.Get(s) != null);
-                            activeUser = userRepository.Get(username);
+                            Console.WriteLine("Username ('Q' To Exit): ");
+                            string response = ValidationUtils.ValidateInput(s => userRepository.Get(s) != null || s == "Q");
 
-                            TransactionMenu.Prompt();
+                            if (response != "Q")
+                            {
+                                activeUser = userRepository.Get(response);
+                                TransactionMenu.Prompt();
+                            }
                         }
                     }
                 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ConsoleApp1
+namespace BankLedgerConsole
 {
     public class User
     {
@@ -32,7 +32,7 @@ namespace ConsoleApp1
         {
             if (transaction.TransactionType.Equals(TransactionType.Withdrawl) && (Balance - transaction.Amount < 0m))
             {
-                // A ModelState attribute would provide a cleaner solution for errors, but would require model subclassing which is a bit much for a small console app.
+                // A ModelErrorState attribute tracking validation errors would be a better solution if more models were to be created.
                 throw new ArgumentException("Transaction would result in an overdrawn account.");
             }
             else

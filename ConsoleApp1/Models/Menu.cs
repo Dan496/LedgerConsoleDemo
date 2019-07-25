@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConsoleApp1.Models
+namespace BankLedgerConsole.Models
 {
+    // Could convert to a Composite if a more complex menu was required.
     public class MenuOption
     {
         public string Key { get; set; }
@@ -38,7 +39,7 @@ namespace ConsoleApp1.Models
                 
                 if (selectedOption == null && selection != Terminal)
                 {
-                    Console.WriteLine("\n== Invalid Selection ==\n");
+                    Console.WriteLine("== Invalid Selection ==");
                 }
             } 
         }

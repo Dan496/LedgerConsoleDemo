@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConsoleApp1.Utility
+namespace BankLedgerConsole.Utility
 {
     static class ValidationUtils
     {
@@ -19,6 +19,26 @@ namespace ConsoleApp1.Utility
             }
 
             return response;
+        }
+
+        public static bool IsPositiveDecimalValue(string input)
+        {
+            decimal amount = 0m;
+
+            try
+            {
+                amount = Decimal.Parse(input);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            if (amount > 0m)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
